@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" value="text/html;charset=utf-8" />
+		<title>Inverse Regex</title>
+	</head>
+	<body>
+		<p>Note there is no such thing as true inverse regex, this is merely an approximation that should be good enough for most places that don't give native inverse match functionality. You need to add any prefixes and suffixes such as ^, $, .*, etc yourself.</p>
+		<input type="text" id="input" />
+		<p id="output">
+		</p>
+		<script>
+
+// https://github.com/lodash/lodash/blob/91c9cb1ea3d0973201d8e5f517a93c9f54e3f9e5/escapeRegExp.js
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/7.0/#sec-patterns).
+ */
+const reRegExpChar = /[\\^$.*+?()[\]{}|]/g
+const reHasRegExpChar = RegExp(reRegExpChar.source)
+
+/**
+ * Escapes the `RegExp` special characters "^", "$", "\", ".", "*", "+",
+ * "?", "(", ")", "[", "]", "{", "}", and "|" in `string`.
+ *
+ * @since 3.0.0
+ * @category String
+ * @param {string} [string=''] The string to escape.
+ * @returns {string} Returns the escaped string.
+ * @see escape, escapeRegExp, unescape
+ * @example
+ *
+ * escapeRegExp('[lodash](https://lodash.com/)')
+ * // => '\[lodash\]\(https://lodash\.com/\)'
+ */
+function escapeRegExp(string) {
+  return (string && reHasRegExpChar.test(string))
+    ? string.replace(reRegExpChar, '\\$&')
+    : (string || '')
+}
+//
+
+var inputElt = document.getElementById("input");
+var outputElt = document.getElementById("output");
+
+function update() {
+	var inputStr = inputElt.value;
+	var parts = [];
+	for (var i = 0; i < inputStr.length; i++) {
+		var p = inputStr.substring(0, i);
+		var c = inputStr.charAt(i);
+		var part = escapeRegExp(p) + "[^" + escapeRegExp(c) + "]";
+		parts.push(part);
+	}
+	outputElt.innerText = "(" + parts.join("|") + ")";
+}
+
+inputElt.addEventListener("input", update);
+update();
+
+		</script>
+	</body>
+</html>
+
